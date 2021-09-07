@@ -1,0 +1,43 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+input {
+  width: 10vw;
+}
+#inputWrapper {
+  margin: 10vw auto;
+  width: 10vw;
+  padding: 3vw;
+  border: 2px solid black;
+}
+
+#inputWrapper > * {
+  margin-bottom: 1vw;
+}
+#square {
+  width: 10vw;
+  height: 10vw;
+  background-color: rgb(0, 0, 0);
+}
+
+h1 {
+  font-size: 1em;
+  font-weight: 400;
+}
+
+#infoWrapper > * {
+  display: flex;
+  width: 10vw;
+}
+#HEX > * {
+  margin: 0;
+  padding-right: 0.5vw;
+}
+#RGB > * {
+  margin: 0;
+  padding-right: 0.5vw;
+}
+#HSL > * {
+  margin: 0;
+  padding-right: 0.5vw;
+}

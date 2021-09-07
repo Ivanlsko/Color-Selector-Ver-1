@@ -1,13 +1,13 @@
+//Making all of the functions fire on "input" change
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOMContentLoaded");
   document.querySelector("input").addEventListener("input", convert);
 });
 
-//variables
-
-//gathering input data into hex variable
+//global function for converting
 function convert() {
   console.log("Input to HEX");
+  //gathering data based on input color value
   let hexCode = document.querySelector("input").value;
   console.log(hexCode);
   let RGBCode = hextoRGB(hexCode);

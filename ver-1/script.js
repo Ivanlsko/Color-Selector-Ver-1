@@ -4,6 +4,7 @@ let RGB = [];
 let r;
 let g;
 let b;
+let h, s, l;
 inputToHEX();
 
 //gathering input data into hex variable
@@ -31,14 +32,13 @@ function hexToRGB() {
 }
 
 //converting rgb to hsl
+//!! this function is not written by me
 function RGBtoHSL() {
   console.log("Rgb to HSL");
 
   r /= 255;
   g /= 255;
   b /= 255;
-
-  let h, s, l;
 
   const min = Math.min(r, g, b);
   const max = Math.max(r, g, b);
@@ -68,14 +68,20 @@ function RGBtoHSL() {
   s *= 100;
   l *= 100;
   console.log("hsl(%f,%f%,%f%)", h, s, l); // just for testing
+  showTheValue();
 }
 
 //function that shows the value of HEX. RGB, HSL in html
 function showTheValue() {
   console.log("Show the values in html");
+  document.querySelector("#HEX > p").innerHTML = hexCode;
+  document.querySelector("#RGB > p").innerHTML = `${RGB[0]}, ${RGB[1]}, ${RGB[2]}`;
+  document.querySelector("#HSL > p").innerHTML = `${h}, ${Math.floor(s)}%, ${Math.floor(l)}%`;
+  changeTheColor();
 }
 
 //function that changes the color of the bigger div
 function changeTheColor() {
   console.log("Change the color");
+  document.querySelector("#square").style.backgroundColor = `rgb(${RGB[0]}, ${RGB[1]}, ${RGB[2]})`;
 }

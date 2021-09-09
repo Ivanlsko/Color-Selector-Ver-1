@@ -10,7 +10,9 @@ document.querySelectorAll("li").forEach((li) => {
 function chooseTheScheme() {
   //check every li, if it has class "selected" remove it
   document.querySelectorAll("li").forEach((e) => {
+    console.log(e);
     e.classList.remove("selected");
+    e.style.borderBottom = "unset";
   });
   // assign classlist "selected" to the clicked li - makes it bolder and underlineds
   this.classList.add("selected");
@@ -21,9 +23,10 @@ function chooseTheScheme() {
   //createNewColors(theColorScheme, HSLCode);
   let theColorScheme = getTheColorScheme();
   let newHSLColors = createNewColors(theColorScheme, HSLCode);
-  let newRGBColors = convertHSLtoRGB(newHSLColors);
+  let correctedHSLColors = correctHSLColors(newHSLColors);
+  let newRGBColors = convertHSLtoRGB(correctedHSLColors);
   let newHEXColors = convertRGBtoHEX(newRGBColors);
-  showTheValue(newHEXColors, newRGBColors, newHSLColors);
+  showTheValue(newHEXColors, newRGBColors, correctedHSLColors);
   changeTheColor(newRGBColors);
 }
 //global function for converting
@@ -35,9 +38,10 @@ function convert() {
   let theColorScheme = getTheColorScheme();
   //new stuff
   let newHSLColors = createNewColors(theColorScheme, HSLCode);
-  let newRGBColors = convertHSLtoRGB(newHSLColors);
+  let correctedHSLColors = correctHSLColors(newHSLColors);
+  let newRGBColors = convertHSLtoRGB(correctedHSLColors);
   let newHEXColors = convertRGBtoHEX(newRGBColors);
-  showTheValue(newHEXColors, newRGBColors, newHSLColors);
+  showTheValue(newHEXColors, newRGBColors, correctedHSLColors);
   changeTheColor(newRGBColors);
   //end of new stuff
 }
@@ -105,49 +109,27 @@ function getTheColorScheme() {
 function createNewColors(theColorScheme, HSLCode) {
   let currentColor, newColor1, newColor2, newColor3, newColor4;
   let newHSLCodes = [];
-  let remainderHSLcodes = [];
   currentColor = HSLCode;
-
-  if (HSLCode[0] > 360) {
-    HSLCode[0] = HSLCode[0] % 360;
-    console.log("its bigger than 360");
-  }
-
-  if (HSLCode[1] > 100) {
-    HSLCode[1] = HSLCode[1] % 100;
-  }
-
-  if (HSLCode[2] > 100) {
-    HSLCode[2] = HSLCode[2] % 100;
-  }
 
   if (theColorScheme == "Monochromatic") {
     console.log("it's monochromatic");
     newColor1 = [HSLCode[0], HSLCode[1], HSLCode[2] + 13];
-    newColor2 = [HSLCode[0], HSLCode[1], HSLCode[2] + 26];
+    newColor2 = [HSLCode[0], HSLCode[1] + 26, HSLCode[2]];
     newColor3 = [HSLCode[0], HSLCode[1], HSLCode[2] + 39];
-    newColor4 = [HSLCode[0], HSLCode[1], HSLCode[2] + 52];
-    //newHSLCodes = { currentColor: currentColor, newColor1: newColor1, newColor2: newColor2, newColor3: newColor3, newColor4: newColor4 };
+    newColor4 = [HSLCode[0], HSLCode[1] + 52, HSLCode[2]];
+
     newHSLCodes = [currentColor, newColor1, newColor2, newColor3, newColor4];
     return newHSLCodes;
   }
   if (theColorScheme == "Triad") {
     console.log("it's triad");
     newColor1 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2]];
-    newColor2 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2] - 30];
-    newColor3 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2] + 30];
+    newColor2 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2] + 10];
+    newColor3 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2] + 40];
     newColor4 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2]];
 
     newHSLCodes = [currentColor, newColor1, newColor2, newColor3, newColor4];
-    newHSLCodes.forEach((color) => {
-      console.log(color);
-      if (color[0] > 360) {
-        color[0] = color[0] % 360;
-      }
-      remainderHSLcodes.push(color);
-      console.log(remainderHSLcodes);
-    });
-    return remainderHSLcodes;
+    return newHSLCodes;
   }
   if (theColorScheme == "Analogous") {
     console.log("it's analagous");
@@ -160,25 +142,52 @@ function createNewColors(theColorScheme, HSLCode) {
   }
   if (theColorScheme == "Complementary") {
     console.log("it's complementary");
-    /*  newColor1 = [HSLCode[0], HSLCode[1], HSLCode[2]];
-    newColor2 = [HSLCode[0], HSLCode[1], HSLCode[2]];
-    newColor3 = [HSLCode[0], HSLCode[1], HSLCode[2]];
-    newColor4 = [HSLCode[0], HSLCode[1], HSLCode[2]]; */
+    newColor1 = [HSLCode[0] + 180, HSLCode[1], HSLCode[2]];
+    newColor2 = [HSLCode[0] + 180, HSLCode[1] + 20, HSLCode[2]];
+    newColor3 = [HSLCode[0], HSLCode[1] + 40, HSLCode[2]];
+    newColor4 = [HSLCode[0], HSLCode[1] + 20, HSLCode[2]];
+    newHSLCodes = [currentColor, newColor1, newColor2, newColor3, newColor4];
+    return newHSLCodes;
   }
   if (theColorScheme == "Shades") {
     console.log("it's shades");
-    /* newColor1 = [HSLCode[0], HSLCode[1], HSLCode[2]];
-    newColor2 = [HSLCode[0], HSLCode[1], HSLCode[2]];
-    newColor3 = [HSLCode[0], HSLCode[1], HSLCode[2]];
-    newColor4 = [HSLCode[0], HSLCode[1], HSLCode[2]]; */
+    newColor1 = [HSLCode[0], HSLCode[1], HSLCode[2] + 10];
+    newColor2 = [HSLCode[0], HSLCode[1], HSLCode[2] + 20];
+    newColor3 = [HSLCode[0], HSLCode[1], HSLCode[2] + 30];
+    newColor4 = [HSLCode[0], HSLCode[1], HSLCode[2] + 40];
+    newHSLCodes = [currentColor, newColor1, newColor2, newColor3, newColor4];
+    return newHSLCodes;
   }
   if (theColorScheme == "Compoud") {
     console.log("it's compoud");
-    /* newColor1 = [HSLCode[0], HSLCode[1], HSLCode[2]];
-    newColor2 = [HSLCode[0], HSLCode[1], HSLCode[2]];
-    newColor3 = [HSLCode[0], HSLCode[1], HSLCode[2]];
-    newColor4 = [HSLCode[0], HSLCode[1], HSLCode[2]]; */
+    newColor1 = [HSLCode[0] + 180, HSLCode[1], HSLCode[2] + 10];
+    newColor2 = [HSLCode[0] + 180, HSLCode[1] + 20, HSLCode[2] + 20];
+    newColor3 = [HSLCode[0] + 40, HSLCode[1], HSLCode[2] + 30];
+    newColor4 = [HSLCode[0] + 60, HSLCode[1], HSLCode[2] + 40];
+    newHSLCodes = [currentColor, newColor1, newColor2, newColor3, newColor4];
+    return newHSLCodes;
   }
+}
+
+function correctHSLColors(oldHSL) {
+  let remainderHSLcodes = [];
+  oldHSL.forEach((color) => {
+    console.log(color);
+    if (color[0] > 360) {
+      color[0] = color[0] % 360;
+    }
+
+    if (color[1] > 100) {
+      color[1] = color[1] % 100;
+    }
+
+    if (color[2] > 100) {
+      color[2] = color[2] % 100;
+    }
+    remainderHSLcodes.push(color);
+    console.log(remainderHSLcodes);
+  });
+  return remainderHSLcodes;
 }
 
 function convertHSLtoRGB(HSL) {
@@ -275,5 +284,6 @@ function changeTheColor(RGB) {
   document.querySelector("#currentColor").style.backgroundColor = `rgb(${RGB[0][0]}, ${RGB[0][1]}, ${RGB[0][2]})`;
   document.querySelector("#color4").style.backgroundColor = `rgb(${RGB[3][0]}, ${RGB[3][1]}, ${RGB[3][2]})`;
   document.querySelector("#color5").style.backgroundColor = `rgb(${RGB[4][0]}, ${RGB[4][1]}, ${RGB[4][2]})`;
-  //document.querySelector(".selected").style.borderBottom = `2px solid rgb(${RGB[0]}, ${RGB[1]}, ${RGB[2]})`;
+  document.querySelector(".selected").style.borderBottom = `2px solid rgb(${RGB[0][0]}, ${RGB[0][1]}, ${RGB[0][2]})`;
+  document.querySelector("#thePath").style.fill = `rgb(${RGB[0][0]}, ${RGB[0][1]}, ${RGB[0][2]})`;
 }

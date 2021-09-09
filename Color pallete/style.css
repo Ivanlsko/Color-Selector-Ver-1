@@ -118,3 +118,9 @@ li {
   height: 0.2vw;
   background-color: #000000;
 }
+
+svg {
+  position: absolute;
+  margin: -0.5vw 8vw;
+  fill: #ffffff;
+}

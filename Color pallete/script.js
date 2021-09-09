@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOMContentLoaded");
   document.querySelector("input").addEventListener("input", convert);
 });
 // for each li set event lister for on click - this calls chooseTheScheme function
@@ -16,34 +15,35 @@ function chooseTheScheme() {
   // assign classlist "selected" to the clicked li - makes it bolder and underlineds
   this.classList.add("selected");
   // the process goes from the start so the colors can change according to newly selected color scheme
-  let theColorScheme = getTheColorScheme();
-  createNewColors(theColorScheme);
   let hexCode = document.querySelector("input").value;
-  console.log(hexCode);
   let RGBCode = hextoRGB(hexCode);
   let HSLCode = RGBtoHSL(RGBCode);
-  showTheValue(hexCode, RGBCode, HSLCode);
+  //createNewColors(theColorScheme, HSLCode);
+  let theColorScheme = getTheColorScheme();
+  let newHSLColors = createNewColors(theColorScheme, HSLCode);
+  let newRGBColors = convertHSLtoRGB(newHSLColors);
+  let newHEXColors = convertRGBtoHEX(newRGBColors);
+  showTheValue(newHEXColors, newRGBColors, newHSLColors);
+  changeTheColor(newRGBColors);
 }
 //global function for converting
 function convert() {
-  console.log("Input to HEX");
   //gathering data based on input color value
   let hexCode = document.querySelector("input").value;
-  console.log(hexCode);
   let RGBCode = hextoRGB(hexCode);
   let HSLCode = RGBtoHSL(RGBCode);
   let theColorScheme = getTheColorScheme();
   //new stuff
   let newHSLColors = createNewColors(theColorScheme, HSLCode);
   let newRGBColors = convertHSLtoRGB(newHSLColors);
-  //end of new stuff
-  showTheValue(hexCode, RGBCode, HSLCode);
+  let newHEXColors = convertRGBtoHEX(newRGBColors);
+  showTheValue(newHEXColors, newRGBColors, newHSLColors);
   changeTheColor(newRGBColors);
+  //end of new stuff
 }
 
 //converting hex to rgb
 function hextoRGB(hexCode) {
-  console.log("Hex to RGB");
   let r = hexCode.substring(1, 3);
   r = parseInt(r, 16);
   let g = hexCode.substring(3, 5);
@@ -51,14 +51,12 @@ function hextoRGB(hexCode) {
   let b = hexCode.substring(5, 7);
   b = parseInt(b, 16);
   let RGBarr = [r, g, b];
-  console.log(RGBarr);
   return RGBarr;
 }
 
 //converting rgb to hsl
 //!! this function is not written by me
 function RGBtoHSL(RGBCode) {
-  console.log("Rgb to HSL");
   let h, s, l;
 
   let r = RGBCode[0];
@@ -95,8 +93,7 @@ function RGBtoHSL(RGBCode) {
   // multiply s and l by 100 to get the value in percent, rather than [0,1]
   s *= 100;
   l *= 100;
-  console.log("hsl(%f,%f%,%f%)", h, s, l); // just for testing
-  return [h, s, l];
+  return [Math.round(h), Math.round(s), Math.round(l)];
 }
 
 // Get the color shceme
@@ -107,8 +104,23 @@ function getTheColorScheme() {
 
 function createNewColors(theColorScheme, HSLCode) {
   let currentColor, newColor1, newColor2, newColor3, newColor4;
-  let newHSLCodes = {};
+  let newHSLCodes = [];
+  let remainderHSLcodes = [];
   currentColor = HSLCode;
+
+  if (HSLCode[0] > 360) {
+    HSLCode[0] = HSLCode[0] % 360;
+    console.log("its bigger than 360");
+  }
+
+  if (HSLCode[1] > 100) {
+    HSLCode[1] = HSLCode[1] % 100;
+  }
+
+  if (HSLCode[2] > 100) {
+    HSLCode[2] = HSLCode[2] % 100;
+  }
+
   if (theColorScheme == "Monochromatic") {
     console.log("it's monochromatic");
     newColor1 = [HSLCode[0], HSLCode[1], HSLCode[2] + 13];
@@ -121,29 +133,61 @@ function createNewColors(theColorScheme, HSLCode) {
   }
   if (theColorScheme == "Triad") {
     console.log("it's triad");
+    newColor1 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2]];
+    newColor2 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2] - 30];
+    newColor3 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2] + 30];
+    newColor4 = [HSLCode[0] + 120, HSLCode[1], HSLCode[2]];
+
+    newHSLCodes = [currentColor, newColor1, newColor2, newColor3, newColor4];
+    newHSLCodes.forEach((color) => {
+      console.log(color);
+      if (color[0] > 360) {
+        color[0] = color[0] % 360;
+      }
+      remainderHSLcodes.push(color);
+      console.log(remainderHSLcodes);
+    });
+    return remainderHSLcodes;
   }
   if (theColorScheme == "Analogous") {
     console.log("it's analagous");
+    newColor1 = [HSLCode[0] + 20, HSLCode[1], HSLCode[2]];
+    newColor2 = [HSLCode[0] + 40, HSLCode[1], HSLCode[2]];
+    newColor3 = [HSLCode[0] + 60, HSLCode[1], HSLCode[2]];
+    newColor4 = [HSLCode[0] + 80, HSLCode[1], HSLCode[2]];
+    newHSLCodes = [currentColor, newColor1, newColor2, newColor3, newColor4];
+    return newHSLCodes;
   }
   if (theColorScheme == "Complementary") {
     console.log("it's complementary");
+    /*  newColor1 = [HSLCode[0], HSLCode[1], HSLCode[2]];
+    newColor2 = [HSLCode[0], HSLCode[1], HSLCode[2]];
+    newColor3 = [HSLCode[0], HSLCode[1], HSLCode[2]];
+    newColor4 = [HSLCode[0], HSLCode[1], HSLCode[2]]; */
   }
   if (theColorScheme == "Shades") {
     console.log("it's shades");
+    /* newColor1 = [HSLCode[0], HSLCode[1], HSLCode[2]];
+    newColor2 = [HSLCode[0], HSLCode[1], HSLCode[2]];
+    newColor3 = [HSLCode[0], HSLCode[1], HSLCode[2]];
+    newColor4 = [HSLCode[0], HSLCode[1], HSLCode[2]]; */
   }
   if (theColorScheme == "Compoud") {
     console.log("it's compoud");
+    /* newColor1 = [HSLCode[0], HSLCode[1], HSLCode[2]];
+    newColor2 = [HSLCode[0], HSLCode[1], HSLCode[2]];
+    newColor3 = [HSLCode[0], HSLCode[1], HSLCode[2]];
+    newColor4 = [HSLCode[0], HSLCode[1], HSLCode[2]]; */
   }
 }
 
 function convertHSLtoRGB(HSL) {
-  console.log(HSL);
+  let h, s, l;
   let newRGBCodes = [];
-
-  for (let i = 0; i < 5; i++) {
-    h = HSL[i][0];
-    s = HSL[i][1] / 100;
-    l = HSL[i][2] / 100;
+  HSL.forEach((hsl) => {
+    h = hsl[0];
+    s = hsl[1] / 100;
+    l = hsl[2] / 100;
 
     let c = (1 - Math.abs(2 * l - 1)) * s,
       x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
@@ -179,24 +223,53 @@ function convertHSLtoRGB(HSL) {
     r = Math.round((r + m) * 255);
     g = Math.round((g + m) * 255);
     b = Math.round((b + m) * 255);
-    console.log([r, g, b]);
     newRGBCodes.push([r, g, b]);
-  }
-  console.log(newRGBCodes);
+  });
+
   return newRGBCodes;
 }
 
+function convertRGBtoHEX(RGB) {
+  let newHEXCodes = [];
+  RGB.forEach((rgb) => {
+    r = Math.abs(rgb[0]).toString(16);
+    g = Math.abs(rgb[1]).toString(16);
+    b = Math.abs(rgb[2]).toString(16);
+    newHEXCodes.push(`#${r}${g}${b}`);
+  });
+
+  return newHEXCodes;
+}
 //function that shows the value of HEX. RGB, HSL in html
-function showTheValue(hexCode, RGB, HSL) {
+function showTheValue(HEX, RGB, HSL) {
   console.log("Show the values in html");
-  document.querySelector("#hex").innerHTML = hexCode;
+  document.querySelector(".firstHex").innerHTML = `${HEX[1]}`;
+  document.querySelector(".firstRgb").innerHTML = `${RGB[1][0]}, ${RGB[1][1]}, ${RGB[1][2]}`;
+  document.querySelector(".firstHsl").innerHTML = `${HSL[1][0]}, ${HSL[1][1]}, ${HSL[1][2]}`;
+
+  document.querySelector(".secondHex").innerHTML = `${HEX[2]}`;
+  document.querySelector(".secondRgb").innerHTML = `${RGB[2][0]}, ${RGB[2][1]}, ${RGB[2][2]}`;
+  document.querySelector(".secondHsl").innerHTML = `${HSL[2][0]}, ${HSL[2][1]}, ${HSL[2][2]}`;
+
+  document.querySelector(".currentHex").innerHTML = `${HEX[0]}`;
+  document.querySelector(".currentRgb").innerHTML = `${RGB[0][0]}, ${RGB[0][1]}, ${RGB[0][2]}`;
+  document.querySelector(".currentHsl").innerHTML = `${HSL[0][0]}, ${HSL[0][1]}, ${HSL[0][2]}`;
+
+  document.querySelector(".fourthHex").innerHTML = `${HEX[3]}`;
+  document.querySelector(".fourthRgb").innerHTML = `${RGB[3][0]}, ${RGB[3][1]}, ${RGB[3][2]}`;
+  document.querySelector(".fourthHsl").innerHTML = `${HSL[3][0]}, ${HSL[3][1]}, ${HSL[3][2]}`;
+
+  document.querySelector(".fifthHex").innerHTML = `${HEX[4]}`;
+  document.querySelector(".fifthRgb").innerHTML = `${RGB[4][0]}, ${RGB[4][1]}, ${RGB[4][2]}`;
+  document.querySelector(".fifthHsl").innerHTML = `${HSL[4][0]}, ${HSL[4][1]}, ${HSL[4][2]}`;
+
+  /* document.querySelector("#hex").innerHTML = hexCode;
   document.querySelector("#rgb").innerHTML = `${RGB[0]}, ${RGB[1]}, ${RGB[2]}`;
-  document.querySelector("#hsl").innerHTML = `${Math.floor(HSL[0])}, ${Math.floor(HSL[1])}%, ${Math.floor(HSL[2])}%`;
+  document.querySelector("#hsl").innerHTML = `${Math.floor(HSL[0])}, ${Math.floor(HSL[1])}%, ${Math.floor(HSL[2])}%`; */
 }
 
 //function that changes the color of the bigger div
 function changeTheColor(RGB) {
-  console.log("Change the color");
   document.querySelector("#color1").style.backgroundColor = `rgb(${RGB[1][0]}, ${RGB[1][1]}, ${RGB[1][2]})`;
   document.querySelector("#color2").style.backgroundColor = `rgb(${RGB[2][0]}, ${RGB[2][1]}, ${RGB[2][2]})`;
   document.querySelector("#currentColor").style.backgroundColor = `rgb(${RGB[0][0]}, ${RGB[0][1]}, ${RGB[0][2]})`;
